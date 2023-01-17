@@ -36,20 +36,25 @@ def getnew_form():
 def upload_file():
     target = os.path.join(app_root, UPLOAD_FOLDER)
     msg = request.form.get("message")
+    
     if not os.path.isdir(target):
         os.makedirs(target)
+        
     if request.method == "POST":
         file = request.files["file"]
         file_name = file.filename or ""
         destination = "/".join([target, file_name])
         file.save(destination)
+        
         # CVS Column Names
         col_name = "phonenumber"
         msg = str(request.form.get("number"))
         hour = datetime.now().hour
         minute = datetime.now().minute
+        
         # Use Pandas to parse the CSV file
         csvData = pd.read_csv(destination, names=col_name, header=None)
+        
         # Loop through the Rows
         for i in csvData.iterrows():
             pywhatkit.sendwhatmsg("+91" + i, msg, hour, minute, 15, True, 2)
